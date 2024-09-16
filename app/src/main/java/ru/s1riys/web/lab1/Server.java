@@ -1,8 +1,10 @@
 package ru.s1riys.web.lab1;
 
 import com.fastcgi.FCGIInterface;
+import ru.s1riys.web.lab1.exceptions.MissingParametersException;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class Server {
     public static void main(String[] args) {
@@ -10,11 +12,17 @@ public class Server {
         while (fcgiInterface.FCGIaccept() >= 0) {
             try {
                 String queryString = FCGIInterface.request.params.getProperty("QUERY_STRING");
-                HashMap<String, String> queryMap = QueryParser.parse(queryString);
 
-                Float x = Float.parseFloat(queryMap.get("x"));
-                Float y = Float.parseFloat(queryMap.get("y"));
-                Float r = Float.parseFloat(queryMap.get("r"));
+                HashMap<String, String> queryParams = QueryParamsManager.parse(queryString);
+                Boolean isQueryParamsConsistent = QueryParamsManager.checkConsistency(
+                        queryParams,
+                        List.of("x", "y", "r")
+                );
+                if (!isQueryParamsConsistent) throw new MissingParametersException();
+
+                Float x = Float.parseFloat(queryParams.get("x"));
+                Float y = Float.parseFloat(queryParams.get("y"));
+                Float r = Float.parseFloat(queryParams.get("r"));
 
                 if (Validator.validateAll(x, y, r)) {
                     // Checking hit
@@ -25,8 +33,8 @@ public class Server {
                     System.out.println(renderError("Invalid query parameters"));
                 }
 
-            } catch (NullPointerException e) {
-                System.out.println(renderError("Required query parameters are missing\n" + e.toString()));
+            } catch (MissingParametersException e) {
+                System.out.println(renderError("Required query parameters are missing"));
             } catch (NumberFormatException e) {
                 System.out.println(renderError("Wrong type of query parameters"));
             } catch (Exception e) {
