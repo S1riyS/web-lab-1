@@ -1,0 +1,53 @@
+* {
+    font-family: sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.navbar {
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+#github-button {
+    margin-left: 15px;
+    padding: 5px 8px;
+}
+
+.image-box {
+    margin-bottom: 20px;
+
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: .5rem;
+}
+
+.params-box {
+    padding: 1.25rem;
+    margin-right: 0;
+    margin-left: 0;
+
+    border: 1px solid #dee2e6;
+    border-radius: .5rem;
+}
+
+#y-checkboxes > .form-check {
+    margin-bottom: 0;
+}
+
+.table-scroll {
+    height: 650px;
+    overflow-y: auto;
+}
+
+.hit {
+    color: #72b043 !important;
+}
+
+.miss {
+    color: #e12729 !important;
+}
