@@ -1,13 +1,17 @@
 package ru.s1riys.web.lab1;
 
 import com.fastcgi.FCGIInterface;
+import ru.s1riys.web.lab1.exceptions.HttpResponseException;
 import ru.s1riys.web.lab1.exceptions.MissingParametersException;
+import ru.s1riys.web.lab1.network.HttpResponse;
+import ru.s1riys.web.lab1.network.HttpStatusCode;
+import ru.s1riys.web.lab1.network.QueryParamsManager;
 
 import java.util.HashMap;
 import java.util.List;
 
 public class Server {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws HttpResponseException {
         var fcgiInterface = new FCGIInterface();
         while (fcgiInterface.FCGIaccept() >= 0) {
             try {
@@ -27,36 +31,39 @@ public class Server {
                 if (Validator.validateAll(x, y, r)) {
                     // Checking hit
                     Boolean hit = Checker.hit(x, y, r);
-                    System.out.println(renderResponse(hit));
+
+                    HashMap<String, Object> payload = new HashMap<>() {{
+                        put("hit", hit);
+                    }};
+
+                    new HttpResponse(HttpStatusCode.OK)
+                            .setContentTypeJSONHeader()
+                            .setBody(true, "Success", payload)
+                            .publish();
                 } else {
                     // Validation error
-                    System.out.println(renderError("Invalid query parameters"));
+                    new HttpResponse(HttpStatusCode.BAD_REQUEST)
+                            .setContentTypeJSONHeader()
+                            .setBody(false, "Invalid query parameters")
+                            .publish();
                 }
 
             } catch (MissingParametersException e) {
-                System.out.println(renderError("Required query parameters are missing"));
+                new HttpResponse(HttpStatusCode.BAD_REQUEST)
+                        .setContentTypeJSONHeader()
+                        .setBody(false, "Required parameters are missing")
+                        .publish();
             } catch (NumberFormatException e) {
-                System.out.println(renderError("Wrong type of query parameters"));
+                new HttpResponse(HttpStatusCode.BAD_REQUEST)
+                        .setContentTypeJSONHeader()
+                        .setBody(false, "Wrong type of provided parameters")
+                        .publish();
             } catch (Exception e) {
-                System.out.println(renderError(e.getMessage()));
+                new HttpResponse(HttpStatusCode.INTERNAL_ERROR)
+                        .setHeader("Content-Type", "text/plain; charset=utf-8")
+                        .setBody("Internal error")
+                        .publish();
             }
         }
-    }
-
-    private static String renderError(String msg) {
-        return """
-                Content-Type: application/json charset=utf-8
-                
-                {"error":"%s", "success": false}
-                """.formatted(msg);
-    }
-
-    private static String renderResponse(boolean hit) {
-        return """
-                Content-Type: application/json; charset=utf-8
-                
-                
-                {"hit": %b, "success": true}
-                """.formatted(hit);
     }
 }
