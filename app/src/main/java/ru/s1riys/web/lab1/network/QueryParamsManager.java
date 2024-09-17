@@ -1,4 +1,4 @@
-package ru.s1riys.web.lab1;
+package ru.s1riys.web.lab1.network;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +12,7 @@ public class QueryParamsManager {
     }
 
     public static HashMap<String, String> parse(String queryString) {
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, String> params = new HashMap<>();
 
         for (String expression : queryString.split("&")) {
             String[] keyValuePair = expression.split("=");
