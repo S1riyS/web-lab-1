@@ -14,6 +14,7 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation("com.google.guava:guava:32.1.1-jre")
+    implementation("org.codehaus.jackson:jackson-mapper-asl:1.9.13")
     implementation(fileTree("libs") { include("*.jar") })
 }
 
