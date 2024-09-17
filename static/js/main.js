@@ -18,8 +18,6 @@ $("#submit").on("click", function () {
     }
 
     // Validating data
-    // console.log(data.x, data.y, data.r)
-    // console.log(Validator.validateX(data.x), Validator.validateY(data.y), Validator.validateR(data.r))
     if (!Validator.validateAll(data.x, data.y, data.r)) {
         swal("Ошибка", "Вы ввели некорректные параметры", "error")
         return;
@@ -32,13 +30,17 @@ $("#submit").on("click", function () {
         dataType: "json",
         success: function (response) {
             if (response.success) {
-                HistoryManager.addRecord(data.x, data.y, data.r, response.hit)
+                HistoryManager.addRecord(data.x, data.y, data.r, response.data.hit)
             } else {
-                swal("Ошибка", "Во время выполнения запроса произошла ошибка", "error")
+                swal("Ошибка", response.message, "error")
             }
         },
         error: function (xhr, status, error) {
-            swal("Ошибка", "Во время выполнения запроса произошла ошибка", "error")
+            swal(
+                `Ошибка ${xhr.status}`,
+                `Во время выполнения запроса произошла ошибка\n(${xhr.responseJSON.message})`,
+                "error"
+            )
         }
     })
 })
