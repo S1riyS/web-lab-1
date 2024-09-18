@@ -4,6 +4,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import ru.s1riys.web.lab1.exceptions.HttpResponseException;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -19,8 +20,8 @@ public class HttpResponse {
         this.statusCode = statusCode.getValue();
     }
 
-    public HttpResponse setHeader(String name, String value) {
-        headers.put(name, value);
+    public HttpResponse setHeader(String name, Object value) {
+        headers.put(name, String.valueOf(value));
         return this;
     }
 
@@ -59,8 +60,11 @@ public class HttpResponse {
 
         StringBuilder responseBuilder = new StringBuilder();
 
-        // Building headers
-        this.setHeader("Status", String.valueOf(this.statusCode));
+        // HTTP status header
+        this.setHeader("Status", this.statusCode);
+        // Content length header
+        this.setHeader("Content-length", this.body.getBytes(StandardCharsets.UTF_8).length);
+        // Other headers
         for (Map.Entry<String, String> header : headers.entrySet()) {
             responseBuilder.append(header.getKey())
                     .append(": ")
