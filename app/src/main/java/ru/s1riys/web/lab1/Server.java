@@ -14,6 +14,16 @@ public class Server {
     public static void main(String[] args) throws HttpResponseException {
         var fcgiInterface = new FCGIInterface();
         while (fcgiInterface.FCGIaccept() >= 0) {
+            // Request method must be GET
+            String method = FCGIInterface.request.params.getProperty("REQUEST_METHOD");
+            if (!method.equals("GET")) {
+                new HttpResponse(HttpStatusCode.METHOD_NOT_ALLOWED)
+                        .setContentTypeJSONHeader()
+                        .setBody(false, "Only GET HTTP-method is allowed")
+                        .publish();
+                continue;
+            }
+
             try {
                 String queryString = FCGIInterface.request.params.getProperty("QUERY_STRING");
 
