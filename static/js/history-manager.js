@@ -58,9 +58,6 @@ export class HistoryManager {
     }
 
     static addRecord(x, y, r, result, currentTime, scriptTime) {
-        let currentDate = new Date();
-        let formattedDate = currentDate.toLocaleString();
-
         HistoryManager.#addRecordToTable(x, y, r, result, currentTime, scriptTime);
         HistoryManager.#addRecordToLocalStorage(x, y, r, result, currentTime, scriptTime);
     }
