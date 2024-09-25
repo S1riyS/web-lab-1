@@ -1,5 +1,5 @@
 import {LocalstorageManager} from "./localstorage-manager.js";
-import {TimeUtil} from "./utils/time-util";
+import {TimeUtil} from "./utils/time-util.js";
 
 export class HistoryManager {
     static #wrapInTdTag(data, class_ = null) {
