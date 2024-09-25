@@ -34,7 +34,7 @@ public class HttpResponse {
         return this;
     }
 
-    public HttpResponse setBody(Boolean success, String message, HashMap<String, Object> data) throws HttpResponseException {
+    public HttpResponse setBody(Boolean success, String message, HashMap<String, Object> data) {
         HashMap<String, Object> processedData = Objects.requireNonNullElseGet(data, HashMap::new);
         HashMap<String, Object> fullResponseData = new HashMap<>() {{
             put("success", success);
@@ -46,12 +46,12 @@ public class HttpResponse {
         try {
             this.body = objectMapper.writeValueAsString(fullResponseData);
             return this;
-        } catch (IOException e) {
-            throw new HttpResponseException();
+        } catch (IOException ignored) {
+            return this;
         }
     }
 
-    public HttpResponse setBody(Boolean success, String message) throws HttpResponseException {
+    public HttpResponse setBody(Boolean success, String message) {
         return this.setBody(success, message, null);
     }
 

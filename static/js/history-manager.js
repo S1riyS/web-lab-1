@@ -1,4 +1,5 @@
 import {LocalstorageManager} from "./localstorage-manager.js";
+import {TimeUtil} from "./utils/time-util";
 
 export class HistoryManager {
     static #wrapInTdTag(data, class_ = null) {
@@ -14,49 +15,54 @@ export class HistoryManager {
         return result ? 'Попадание' : 'Промах';
     }
 
-    static #buildItem(x, y, r, result, datetime) {
+    static #buildItem(x, y, r, result, currentTime, scriptTime) {
         return {
             "x": x,
             "y": y,
             "r": r,
             "result": result,
-            "datetime": datetime,
+            "currentTime": currentTime,
+            "scriptTime": scriptTime,
         }
     }
 
     static #renderItem(item) {
         let processedResult = HistoryManager.#processResult(item.result);
-        let resultClass = item.result ? 'hit' : 'miss'
+        let resultClass = item.result ? 'hit' : 'miss';
+
+        let processedCurrentTime = TimeUtil.dateTimeFromMilliseconds(item.currentTime);
+        let processedScriptTime = TimeUtil.timePassedFromMilliseconds(item.scriptTime);
 
         return HistoryManager.#wrapInTrTag(
             HistoryManager.#wrapInTdTag(item.x) +
             HistoryManager.#wrapInTdTag(item.y) +
             HistoryManager.#wrapInTdTag(item.r) +
             HistoryManager.#wrapInTdTag(processedResult, resultClass) +
-            HistoryManager.#wrapInTdTag(item.datetime)
+            HistoryManager.#wrapInTdTag(processedCurrentTime) +
+            HistoryManager.#wrapInTdTag(processedScriptTime)
         )
     }
 
-    static #addRecordToTable(x, y, r, result, datetime) {
+    static #addRecordToTable(x, y, r, result, currentTime, scriptTime) {
         let tableBody = $('#history-table-body');
 
-        let item = HistoryManager.#buildItem(x, y, r, result, datetime);
+        let item = HistoryManager.#buildItem(x, y, r, result, currentTime, scriptTime);
         let newRow = HistoryManager.#renderItem(item);
 
         tableBody.prepend(newRow);
     }
 
-    static #addRecordToLocalStorage(x, y, r, result, datetime) {
-        let newItem = HistoryManager.#buildItem(x, y, r, result, datetime);
+    static #addRecordToLocalStorage(x, y, r, result, currentTime, scriptTime) {
+        let newItem = HistoryManager.#buildItem(x, y, r, result, currentTime, scriptTime);
         LocalstorageManager.addRecord(newItem);
     }
 
-    static addRecord(x, y, r, result) {
+    static addRecord(x, y, r, result, currentTime, scriptTime) {
         let currentDate = new Date();
         let formattedDate = currentDate.toLocaleString();
 
-        HistoryManager.#addRecordToTable(x, y, r, result, formattedDate);
-        HistoryManager.#addRecordToLocalStorage(x, y, r, result, formattedDate);
+        HistoryManager.#addRecordToTable(x, y, r, result, currentTime, scriptTime);
+        HistoryManager.#addRecordToLocalStorage(x, y, r, result, currentTime, scriptTime);
     }
 
     static loadRecords() {

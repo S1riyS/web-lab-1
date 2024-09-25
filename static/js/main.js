@@ -30,7 +30,7 @@ $("#submit").on("click", function () {
         dataType: "json",
         success: function (response) {
             if (response.success) {
-                HistoryManager.addRecord(data.x, data.y, data.r, response.data.hit)
+                HistoryManager.addRecord(data.x, data.y, data.r, response.data.hit, response.data.currentTime, response.data.scriptTime)
             } else {
                 swal("Ошибка", response.message, "error")
             }
