@@ -2,7 +2,7 @@ package ru.s1riys.web.lab1.handlers.main;
 
 import com.fastcgi.FCGIInterface;
 import com.fastcgi.FCGIRequest;
-import ru.s1riys.web.lab1.Checker;
+import ru.s1riys.web.lab1.HitChecker;
 import ru.s1riys.web.lab1.Validator;
 import ru.s1riys.web.lab1.exceptions.MissingParametersException;
 import ru.s1riys.web.lab1.handlers.IHandler;
@@ -28,13 +28,12 @@ public class Handler implements IHandler {
             );
             if (!isQueryParamsConsistent) throw new MissingParametersException();
 
-            Double x = Double.parseDouble(queryParams.get("x"));
-            Double y = Double.parseDouble(queryParams.get("y"));
-            Double r = Double.parseDouble(queryParams.get("r"));
+            Validator validator = new Validator(queryParams.get("x"), queryParams.get("y"), queryParams.get("r"));
+            if (validator.check()) {
+                HitChecker hitChecker = new HitChecker(queryParams.get("x"), queryParams.get("y"), queryParams.get("r"));
 
-            if (Validator.validateAll(x, y, r)) {
                 // Collecting payload's data
-                Boolean hit = Checker.hit(x, y, r);
+                Boolean hit = hitChecker.getResult();
                 Long scriptTime = getExecutionTime();
                 Long currentTime = System.currentTimeMillis();
                 HashMap<String, Object> payload = new HashMap<>() {{

@@ -2,14 +2,7 @@ package ru.s1riys.web.lab1;
 
 import com.fastcgi.FCGIInterface;
 import com.fastcgi.FCGIRequest;
-import ru.s1riys.web.lab1.exceptions.MissingParametersException;
 import ru.s1riys.web.lab1.handlers.main.HandlerProxy;
-import ru.s1riys.web.lab1.network.HttpResponse;
-import ru.s1riys.web.lab1.network.HttpStatusCode;
-import ru.s1riys.web.lab1.network.QueryParamsManager;
-
-import java.util.HashMap;
-import java.util.List;
 
 public class Server {
 
